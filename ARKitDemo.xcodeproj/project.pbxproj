@@ -17,6 +17,7 @@
 		04968C2D22B3912700370898 /* plane.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 04968C2C22B3912700370898 /* plane.jpg */; };
 		04968C2F22B39DFE00370898 /* Hero.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04968C2E22B39DFE00370898 /* Hero.swift */; };
 		04968C3522B3AA6B00370898 /* monster.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 04968C3422B3AA6B00370898 /* monster.scnassets */; };
+		04EB8AF422B3C10F00528EEB /* Enemy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04EB8AF322B3C10F00528EEB /* Enemy.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,7 @@
 		04968C2C22B3912700370898 /* plane.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = plane.jpg; sourceTree = "<group>"; };
 		04968C2E22B39DFE00370898 /* Hero.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hero.swift; sourceTree = "<group>"; };
 		04968C3422B3AA6B00370898 /* monster.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = monster.scnassets; sourceTree = "<group>"; };
+		04EB8AF322B3C10F00528EEB /* Enemy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enemy.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,6 +71,7 @@
 				04968BF822B3871900370898 /* ViewController.swift */,
 				04968C2A22B38E8500370898 /* Plane.swift */,
 				04968C2E22B39DFE00370898 /* Hero.swift */,
+				04EB8AF322B3C10F00528EEB /* Enemy.swift */,
 				04968BFA22B3871A00370898 /* Main.storyboard */,
 				04968BFD22B3871C00370898 /* Assets.xcassets */,
 				04968C3422B3AA6B00370898 /* monster.scnassets */,
@@ -154,6 +157,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				04968BF922B3871900370898 /* ViewController.swift in Sources */,
+				04EB8AF422B3C10F00528EEB /* Enemy.swift in Sources */,
 				04968C2B22B38E8500370898 /* Plane.swift in Sources */,
 				04968BF522B3871900370898 /* AppDelegate.swift in Sources */,
 				04968C2F22B39DFE00370898 /* Hero.swift in Sources */,

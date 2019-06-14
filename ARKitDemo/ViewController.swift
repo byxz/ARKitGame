@@ -22,6 +22,13 @@ class ViewController: UIViewController, ARSCNViewDelegate, SCNPhysicsContactDele
     
     var plane: Plane!
     var hero: Hero!
+    var enemy: Enemy!
+    
+    var scoreLabel: SCNText!
+    var scoreNode: SCNNode!
+    
+    var gameOverLabel: SCNText!
+    var gameOverNode: SCNNode!
     
     let planes: NSMutableDictionary! = [:]
     var configuration: ARWorldTrackingConfiguration! = nil
@@ -121,8 +128,15 @@ class ViewController: UIViewController, ARSCNViewDelegate, SCNPhysicsContactDele
     }
     
     private func setupGame(_ spawnPos: SCNVector3) {
+        
+        //Hero init
         hero = Hero(sceneView.scene, spawnPos)
         hero.castsShadow = true
+        
+        //Enemy itin
+        enemy = Enemy(sceneView.scene, spawnPos)
+        enemy.castsShadow = true
+        
         
         //Light
         let directionLight = SCNLight()
@@ -146,7 +160,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, SCNPhysicsContactDele
         
         //Ground
         let ground = SCNFloor()
-        ground.firstMaterial?.diffuse.contents = UIColor.clear
+        ground.firstMaterial?.diffuse.contents = UIColor.gray
+        ground.firstMaterial?.colorBufferWriteMask = .init(rawValue: 0)
         let groundNode = SCNNode(geometry: ground)
         groundNode.physicsBody = SCNPhysicsBody(type: .static, shape:SCNPhysicsShape(geometry: ground, options:nil))
         groundNode.position = SCNVector3(spawnPos.x + 0.2, spawnPos.y, spawnPos.z)
@@ -157,6 +172,37 @@ class ViewController: UIViewController, ARSCNViewDelegate, SCNPhysicsContactDele
         groundNode.name = "ground"
         groundNode.castsShadow = true
         sceneView.scene.rootNode.addChildNode(groundNode)
+        
+        
+        //3d Text
+        
+        scoreLabel = SCNText(string: "Score: 0", extrusionDepth: 0.2)
+        scoreLabel.font = UIFont(name: "Arial", size: 4)
+        scoreLabel.firstMaterial!.diffuse.contents = UIColor.blue
+        
+        let (scoreLableMinVec, scoreLableMaxVec)  = scoreLabel.boundingBox
+        let scoreBound = SCNVector3(x: scoreLableMaxVec.x - scoreLableMinVec.x, y: scoreLableMaxVec.y - scoreLableMinVec.y, z: scoreLableMaxVec.z - scoreLableMinVec.z)
+        scoreNode = SCNNode(geometry: scoreLabel)
+        scoreNode.pivot = SCNMatrix4MakeTranslation(scoreBound.x * 0.5, 0 , 0)
+        
+        scoreNode.position = SCNVector3(spawnPos.x + 0.2, spawnPos.y + 0.16, spawnPos.z)
+        scoreNode.scale = SCNVector3(0.0125, 0.0125, 0.0125)
+        sceneView.scene.rootNode.addChildNode(scoreNode)
+        
+        // gameover label
+        gameOverLabel = SCNText(string: "GAMEOVER !!!",
+                                extrusionDepth: 0.2)
+        gameOverLabel.font = UIFont(name: "Arial", size: 4)
+        gameOverLabel.firstMaterial!.diffuse.contents = UIColor.red
+        let (gameOverLabelMinVec, gameOverLabelMaxVec) = gameOverLabel.boundingBox
+        let goBound = SCNVector3(x: gameOverLabelMaxVec.x - gameOverLabelMinVec.x, y: gameOverLabelMaxVec.y - gameOverLabelMinVec.y, z: gameOverLabelMaxVec.z - gameOverLabelMinVec.z)
+        gameOverNode = SCNNode(geometry: gameOverLabel)
+        gameOverNode.pivot = SCNMatrix4MakeTranslation(goBound.x * 0.5, 0 , 0)
+        gameOverNode.position = SCNVector3(spawnPos.x + 0.2, spawnPos.y + 0.08, spawnPos.z)
+        gameOverNode.scale = SCNVector3(0.02, 0.02, 0.2)
+        sceneView.scene.rootNode.addChildNode(gameOverNode)
+        gameOverNode.isHidden = true
+        
     }
     
     
@@ -176,6 +222,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, SCNPhysicsContactDele
             } else {
                 if(!bGameOver){
                     hero.jump()
+                } else{
+                    bGameOver = false
+                    gameOverNode.isHidden = true
                 }
             }
         }
@@ -183,12 +232,35 @@ class ViewController: UIViewController, ARSCNViewDelegate, SCNPhysicsContactDele
 
     
     func physicsWorld(_ world: SCNPhysicsWorld, didBegin contact: SCNPhysicsContact) {
-        if( (contact.nodeA.name == "hero" && contact.nodeB.name == "ground") || (contact.nodeA.name == "ground" && contact.nodeB.name == "hero")
-            ){
+        if( (contact.nodeA.name == "hero" && contact.nodeB.name == "ground") || (contact.nodeA.name == "ground" && contact.nodeB.name == "hero") ){
             if(hero.isGrounded == false){
                 hero.isGrounded = true
                 hero.playRunAnim()
                 print("ground in contact with hero")
+            }
+        }
+        
+        if( (contact.nodeA.name == "hero" && contact.nodeB.name == "ground") || (contact.nodeA.name == "ground" && contact.nodeB.name == "hero") ){
+            if(hero.isGrounded == false){
+                hero.isGrounded = true
+                hero.playRunAnim()
+                print("ground in contact with hero")
+            }
+        }
+        
+        if( (contact.nodeA.name == "hero" && contact.nodeB.name == "enemy") || (contact.nodeA.name == "enemy" && contact.nodeB.name == "hero") ){
+            bGameOver = true
+            enemy.reset()
+            gameOverNode.isHidden = false
+            print("GameOver")
+        }
+    }
+    
+    func renderer(_ aRenderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
+        if(bGameSetup){
+            if(!bGameOver){
+                enemy.update()
+                scoreLabel.string = "Score: \(enemy.score)"
             }
         }
     }
